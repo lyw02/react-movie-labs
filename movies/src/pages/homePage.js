@@ -4,7 +4,7 @@ import FilterCard from "../components/filterMoviesCard";
 import MovieList from "../components/movieList";
 import Grid from "@mui/material/Grid";
 
-const MovieListPage = (props) => {
+const MovieListPage = () => {
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
