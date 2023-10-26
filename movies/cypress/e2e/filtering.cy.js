@@ -40,8 +40,8 @@ describe("Filtering", () => {
   });
   describe("By movie genre", () => {
     it("show movies with the selected genre", () => {
-      const selectedGenreId = 35;
-      const selectedGenreText = "Comedy";
+      const selectedGenreId = 18;
+      const selectedGenreText = "Drama";
       const searchString = "m";
       const matchingMovies = filterByTitle(
         filterByGenre(movies, selectedGenreId),
@@ -54,12 +54,8 @@ describe("Filtering", () => {
         "have.length",
         matchingMovies.length
       );
-      cy.get(".MuiGrid-container").then(($parent) => {
-        if ($parent.find("MuiGrid-item").length > 1) {
-          cy.get(".MuiCardHeader-content").each(($card, index) => {
-            cy.wrap($card).find("p").contains(matchingMovies[index].title);
-          });
-        }
+      cy.get(".MuiCardHeader-content").each(($card, index) => {
+        cy.wrap($card).find("p").contains(matchingMovies[index].title);
       });
     });
   });
