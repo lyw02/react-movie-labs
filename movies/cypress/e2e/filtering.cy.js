@@ -20,8 +20,8 @@ describe("Filtering", () => {
   });
 
   describe("By movie title", () => {
-    it("only display movies with 'a' in the title", () => {
-      const searchString = "a";
+    it("only display movies with 'm' in the title", () => {
+      const searchString = "m";
       const matchingMovies = filterByTitle(movies, searchString);
       cy.get("#filled-search").clear().type(searchString); // Enter m in text box
       cy.get(".MuiCardHeader-content").should(
@@ -34,12 +34,37 @@ describe("Filtering", () => {
     });
     it("handles case when there are no matches", () => {
       const searchString = "xyxxzyyzz";
-      cy.get("#filled-search").clear().type(searchString); // Enter a in text box
+      cy.get("#filled-search").clear().type(searchString); // Enter m in text box
       cy.get(".MuiCardHeader-content").should("have.length", 0);
     });
   });
   describe("By movie genre", () => {
     it("show movies with the selected genre", () => {
+      const selectedGenreId = 35;
+      const selectedGenreText = "Comedy";
+      const searchString = "m";
+      const matchingMovies = filterByTitle(
+        filterByGenre(movies, selectedGenreId),
+        searchString
+      );
+      cy.get("#genre-select").click();
+      cy.get("li").contains(selectedGenreText).click();
+      cy.get("#filled-search").clear().type(searchString); // Enter m in text box
+      cy.get(".MuiCardHeader-content").should(
+        "have.length",
+        matchingMovies.length
+      );
+      cy.get(".MuiGrid-container").then(($parent) => {
+        if ($parent.find("MuiGrid-item").length > 1) {
+          cy.get(".MuiCardHeader-content").each(($card, index) => {
+            cy.wrap($card).find("p").contains(matchingMovies[index].title);
+          });
+        }
+      });
+    });
+  });
+  describe("Combined genre and title", () => {
+    it("show movies with the selected genre & only display movies with 'm' in the title", () => {
       const selectedGenreId = 35;
       const selectedGenreText = "Comedy";
       const matchingMovies = filterByGenre(movies, selectedGenreId);
@@ -57,8 +82,16 @@ describe("Filtering", () => {
         }
       });
     });
-  });
-  describe("Combined genre and title", () => {
-    // TODO
+    it("handles case when there are no matches by movie title", () => {
+      const searchString = "xyxxzyyzz";
+      cy.get("#filled-search").clear().type(searchString);
+      cy.get(".MuiCardHeader-content").should("have.length", 0);
+    });
+    it("handles case when there are no matches by movie genre", () => {
+      const selectedGenreText = "Comedy";
+      cy.get("#genre-select").click();
+      cy.get("li").contains(selectedGenreText).click();
+      cy.get(".MuiCardHeader-content").should("have.length", 0);
+    });
   });
 });
