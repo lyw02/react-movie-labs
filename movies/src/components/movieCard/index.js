@@ -10,14 +10,14 @@ import Typography from "@mui/material/Typography";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import CalendarIcon from "@mui/icons-material/CalendarTodayTwoTone";
 import StarRateIcon from "@mui/icons-material/StarRate";
-import IconButton from "@mui/material/IconButton";
+import MustWatchIcon from "@mui/icons-material/PlaylistAddCheck";
 import Grid from "@mui/material/Grid";
 import Avatar from "@mui/material/Avatar";
 import img from "../../images/film-poster-placeholder.png";
 import { Link } from "react-router-dom";
 
 export default function MovieCard({ movie, action }) {
-  const { favorites, addToFavorites } = useContext(MoviesContext);
+  const { favorites, mustWatch } = useContext(MoviesContext);
 
   if (favorites.find((id) => id === movie.id)) {
     movie.favorite = true;
@@ -25,20 +25,28 @@ export default function MovieCard({ movie, action }) {
     movie.favorite = false;
   }
 
-  const handleAddToFavorite = (e) => {
-    e.preventDefault();
-    addToFavorites(movie);
-  };
+  if (mustWatch.find((id) => id === movie.id)) {
+    movie.must_watch = true;
+  } else {
+    movie.must_watch = false;
+  }
+
+  const cardHeaderAvatar = [
+    {key: 0, attrName: "favorite", avatar: (<FavoriteIcon />)},
+    {key: 1, attrName: "must_watch", avatar: (<MustWatchIcon />)}
+  ]
 
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardHeader
         avatar={
-          movie.favorite ? (
-            <Avatar sx={{ backgroundColor: "red" }}>
-              <FavoriteIcon />
-            </Avatar>
-          ) : null
+          cardHeaderAvatar.map((item) => {
+            return movie[item.attrName] ? (
+              <Avatar key={item.key} sx={{background: "red", marginRight: "5px"}}>
+                {item.avatar}
+              </Avatar>
+            ) : null
+          })
         }
         title={
           <Typography variant="h5" component="p">
